@@ -1,8 +1,9 @@
-#Start
 #Importing Modules
 try:
     import sys
     import time
+    import requests
+    import json
     from telegram import InlineKeyboardButton, InlineKeyboardMarkup
     from telegram.ext import MessageHandler, Filters, Updater, CommandHandler, CallbackQueryHandler
     import logging
@@ -10,20 +11,13 @@ except ImportError as e:
 	print("Problem: ",e)
 	exit()
 
-login_post = {}
+
+BASE_URL = "https://api.fandogh.cloud/api/"
+
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-class LoginInfo:
-        email = ''
-        password = ''
-
-
-credentials = LoginInfo()
-
-
 
 
 def start(update, context):
@@ -31,10 +25,7 @@ def start(update, context):
         hour = int(time.strftime("%H"))
 
         text = ''
-
-        credentials.email = ''
-        credentials.password = ''
-
+ 
         if hour >= 0 and hour <= 11:
                 text="Good Morning!"
 
@@ -44,34 +35,12 @@ def start(update, context):
         elif hour >= 17 and hour <= 23:
                 text="Good Evening!"
 
-        keyboard = [[InlineKeyboardButton("Login", callback_data='1')]]
+        update.message.reply_text(text + "\n\nFor Sign In please use command like this\n/login Username Password")
 
-        reply_markup = InlineKeyboardMarkup(keyboard)
-
-        update.message.reply_text(text)
-
-        update.message.reply_text('Please choose:', reply_markup=reply_markup)
-
-
-
-
-# def login(bot, update, args):
-#     if len(args) > 1:
-#         username = args[0]
-#         password = args[1]
-#         global login_post
-#         login_post = {
-#             'username': username.lower(),
-#             'password': password
-#         }
-#         bot.sendMessage(chat_id=update.message.chat_id, text="Now you can send private url of photo or video of your private friends.")
-#         print(username, password)
-#     else:
-#         bot.sendMessage(chat_id=update.message.chat_id, text="Try again. Use /login username password.")
 
 def login(update, context):
-    """Command handler: /login <username> <password> - save login to database."""
-    logging.info(f"Command: /login triggered by {update.effective_chat.id}")
+    """Command handler: /login <username> <password>"""
+    # logging.info(f"Command: /login triggered by {update.effective_chat.id}")
     if len(context.args) != 2:
         context.bot.send_message(
             chat_id=update.effective_chat.id,
@@ -79,28 +48,17 @@ def login(update, context):
         )
     else:
         print(context.args)
+        getToken(context.args[0],context.args[1])
 
-                        
 
-
-# def loginButton(update, context):
-#     query = update.callback_query
-
-#     query.answer()
-
-#     query.edit_message_text(text="Enter your username: ")
-
-def getUserText(update, context):
-    text = update.message.text
-    print(text)
-    return text
 
 def help_command(update, context):
-    update.message.reply_text("Use /start to login again.")
+    update.message.reply_text("Use /login Username Password to login again.")
 
-def getToken():
-    # api.fandogh.cloud/api/tokens
-    print("get token")
+def getToken(username, password):
+    global BASE_URL
+    r = requests.post(BASE_URL + "tokens", data = {'username':username,'password':password})
+    print("the token is: ",r)
 
 
 def main():
@@ -115,8 +73,6 @@ def main():
 
 
     dp.add_handler(CommandHandler('start', start))
-    # dp.add_handler(CallbackQueryHandler(loginButton))
-    # dp.add_handler(MessageHandler(Filters.text, getUserText))
 
     login_handler = CommandHandler('login', login, pass_args=True)
     dp.add_handler(login_handler)
