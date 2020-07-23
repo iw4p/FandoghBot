@@ -19,6 +19,14 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+class Login:
+    email = ''
+    namespaces = []
+    username = ''
+    token = ''
+    is_staff = bool
+
+loginInfo = Login()
 
 def start(update, context):
 
@@ -46,19 +54,31 @@ def login(update, context):
             chat_id=update.effective_chat.id,
             text="Not enough or too many parameters, I need both usernamae and password.",
         )
-    else:
-        print(context.args)
-        getToken(context.args[0],context.args[1])
+    else:        
+        response = getLoginInfo(context.args[0],context.args[1])
+        context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text=response,
+        )
 
 
 
 def help_command(update, context):
     update.message.reply_text("Use /login Username Password to login again.")
 
-def getToken(username, password):
+def getLoginInfo(username, password):
     global BASE_URL
-    r = requests.post(BASE_URL + "tokens", data = {'username':username,'password':password})
-    print("the token is: ",r)
+    response = requests.post(BASE_URL + "tokens", data = {'username':username,'password':password})
+    if response.status_code == 200:
+        json_response = response.json()
+        loginInfo.email = json_response['email']
+        loginInfo.namespaces = json_response['namespaces']
+        loginInfo.username = json_response['username']
+        loginInfo.token = json_response['token']
+        loginInfo.is_staff = json_response['is_staff']
+        return loginInfo.token
+    else:
+        return response.json()['message']
 
 
 def main():
