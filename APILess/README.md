@@ -3,7 +3,7 @@ remoteTelegramShell is a secure remote shell for Linux that makes use of Telegra
 
 It also has a log file for tracking users input, that registers the date, command and user ID.
 
-![alt tag](/readme_images/gif1.gif)
+![alt tag](/readme_images/APILess/gif1.gif)
 
 
 ## How it works
@@ -14,7 +14,7 @@ Once the user is logged in, commands can be sent. Linux computer receives and ex
 Telegram bot is running on computer's side. Commands are sent from any (authorized) Telegram client and received by Telegram bot. 
 Commands are sent through python to CMD and excecuted, the output is captured and sent in real time to the user.
 
-![alt tag](/readme_images/image1.png)
+![alt tag](/readme_images/APILess/image1.png)
 
 
 
@@ -42,12 +42,12 @@ pip install pyTelegramBotApi
 ```
 On telegram, create a new bot (talk to *@BotFather*) and save the token.
 
-![alt tag](/readme_images/image2.png)
+![alt tag](/readme_images/APILess/image2.png)
 
 Afterwards edit "config.txt" file and fill the blanks. The files paths MUST be absolute, if you use relative paths you have to stay
 in the same directory during the execution (you can't use "cd" to move to others directories) and wont be able to run the script on boot (using crontab). 
 
-![alt tag](/readme_images/image3.png)
+![alt tag](/readme_images/APILess/image3.png)
 
 Depending on the chosen directory and if sudo parameter is active, it might be necessary to change access permissions of the files, this can be done with chmod command.
 
@@ -57,7 +57,7 @@ python3 telegramShellBot.py
 python3 telegramShellBot.py &              (this will run the script in background)
 ```
 
-![alt tag](/readme_images/image4.png)
+![alt tag](/readme_images/APILess/image4.png)
 
 
 ## Sending and receiving files
@@ -65,7 +65,7 @@ To send files just drag and drop on the chat, or click on send file button (imag
 To download files from the computer use "getfile + path" (e.g. getfile /home/user/Desktop/test-file.txt).
 **Important:** File sending can be done by any user, even if he hasn't logged in, this is currently being fixed.
 
-![alt tag](/readme_images/gif2.gif)
+![alt tag](/readme_images/APILess/gif2.gif)
 
 
 ## Roadmap
